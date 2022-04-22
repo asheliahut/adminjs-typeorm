@@ -4,7 +4,7 @@ import { validate } from 'class-validator'
 
 import { Car } from './entities/Car'
 import { CarDealer } from './entities/CarDealer'
-import { connect, close } from './utils/testConnection'
+import { connect, close } from './utils/testDataSource'
 
 import { Resource } from '../src/Resource'
 import { CarBuyer } from './entities/CarBuyer'
@@ -68,19 +68,19 @@ describe('Resource', () => {
 
   describe('#properties', () => {
     it('returns all the properties', () => {
-      expect(resource.properties()).to.have.lengthOf(13)
+      expect(resource.properties()).to.have.lengthOf(12)
     })
 
     it('returns all properties with the correct position', () => {
       expect(resource.properties().map((property) => property.position())).to.deep.equal([
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
       ])
     })
   })
 
   describe('#property', () => {
     it('returns selected property', () => {
-      const property = resource.property('carId')
+      const property = resource.property('id')
 
       expect(property).to.be.an.instanceOf(BaseProperty)
     })
@@ -133,28 +133,34 @@ describe('Resource', () => {
       const params = await resource.create(data)
 
       // eslint-disable-next-line no-unused-expressions
-      expect(params.carId).not.to.be.undefined
+      expect(params.id).not.to.be.undefined
     })
 
     it('stores Column with defined name property', async () => {
       const params = await resource.create(data)
-      const storedRecord = await Car.findOne(params.carId) as Car
+      const storedRecord: Car|null = await Car.findOneBy({
+        id: params.id,
+      } as any)
 
-      expect(storedRecord.streetNumber).to.equal(data.streetNumber)
+      expect(storedRecord?.streetNumber).to.equal(data.streetNumber)
     })
 
     it('stores number Column with property as string', async () => {
       const params = await resource.create(data)
-      const storedRecord = await Car.findOne(params.carId) as Car
+      const storedRecord: Car|null = await Car.findOneBy({
+        id: params.id,
+      } as any)
 
-      expect(storedRecord.stringAge).to.equal(4)
+      expect(storedRecord?.stringAge).to.equal(4)
     })
 
     it('stores mixed type properties', async () => {
       const params = await resource.create(data)
-      const storedRecord = await Car.findOne(params.carId) as Car
+      const storedRecord: Car|null = await Car.findOneBy({
+        id: params.id,
+      } as any)
 
-      expect(storedRecord.meta).to.deep.equal({
+      expect(storedRecord?.meta).to.deep.equal({
         title: data['meta.title'],
         description: data['meta.description'],
       })
@@ -208,7 +214,8 @@ describe('Resource', () => {
         age: 4,
         stringAge: '4',
       })
-      record = await resource.findOne(params.carId)
+
+      record = await resource.findOne(params.id)
     })
 
     it('updates record name', async () => {
@@ -218,7 +225,7 @@ describe('Resource', () => {
       })
       const recordInDb = await resource.findOne((record && record.id()) as string)
 
-      expect(recordInDb && recordInDb.param('name')).to.equal(ford)
+      expect(recordInDb && recordInDb.get('name')).to.equal(ford)
     })
 
     it('throws error when wrong name is given', async () => {
@@ -255,10 +262,10 @@ describe('Resource', () => {
     it('creates new resource with uuid', async () => {
       carParams = await resource.create({
         ...data,
-        carBuyerId: carBuyer.carBuyerId,
+        carBuyerId: carBuyer.id,
       })
 
-      expect(carParams.carBuyerId).to.equal(carBuyer.carBuyerId)
+      expect(carParams.carBuyerId).to.equal(carBuyer.id)
     })
   })
 
@@ -273,12 +280,12 @@ describe('Resource', () => {
     })
 
     afterEach(async () => {
-      await Car.delete(carParams.carId)
-      await CarDealer.delete(carDealer)
+      await Car.delete(carParams.id)
+      await CarDealer.delete(carDealer.id)
     })
 
     it('deletes the resource', async () => {
-      await resource.delete(carParams.carId)
+      await resource.delete(carParams.id)
       expect(await resource.count({} as Filter)).to.eq(0)
     })
 
