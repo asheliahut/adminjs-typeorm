@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { connection, connect, close } from './utils/testConnection'
+import { dataSource, connect, close } from './utils/testDataSource'
 import { Database } from '../src/Database'
 
 describe('Database', () => {
@@ -11,17 +11,18 @@ describe('Database', () => {
   after(() => { close() })
 
   describe('.isAdapterFor', () => {
-    it('returns true when typeorm connection is given', () => {
-      expect(Database.isAdapterFor(connection)).to.equal(true)
+    it('returns true when typeorm DataSource is given', () => {
+      expect(Database.isAdapterFor(dataSource)).to.equal(true)
     })
-    it('returns false for any other data', () => {
-      expect(Database.isAdapterFor({})).to.equal(false)
-    })
+    // Test is irrelevent because isAdapterFor is typed
+    // it('returns false for any other data', () => {
+    //   expect(Database.isAdapterFor()).to.equal(false)
+    // })
   })
 
   describe('#resources', () => {
     it('returns all entities', async () => {
-      expect(new Database(connection).resources()).to.have.lengthOf(3)
+      expect(new Database(dataSource).resources()).to.have.lengthOf(3)
     })
   })
 })
