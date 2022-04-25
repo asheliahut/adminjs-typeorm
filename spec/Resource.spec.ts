@@ -80,7 +80,7 @@ describe('Resource', () => {
 
   describe('#property', () => {
     it('returns selected property', () => {
-      const property = resource.property('id')
+      const property = resource.property('carId')
 
       expect(property).to.be.an.instanceOf(BaseProperty)
     })
@@ -133,32 +133,32 @@ describe('Resource', () => {
       const params = await resource.create(data)
 
       // eslint-disable-next-line no-unused-expressions
-      expect(params.id).not.to.be.undefined
+      expect(params.carId).not.to.be.undefined
     })
 
     it('stores Column with defined name property', async () => {
       const params = await resource.create(data)
-      const storedRecord: Car|null = await Car.findOneBy({
-        id: params.id,
-      } as any)
+      const reference: any = {}
+      reference[resource.idName()] = params.carId
+      const storedRecord: Car|null = await Car.findOneBy(reference)
 
       expect(storedRecord?.streetNumber).to.equal(data.streetNumber)
     })
 
     it('stores number Column with property as string', async () => {
       const params = await resource.create(data)
-      const storedRecord: Car|null = await Car.findOneBy({
-        id: params.id,
-      } as any)
+      const reference: any = {}
+      reference[resource.idName()] = params.carId
+      const storedRecord: Car|null = await Car.findOneBy(reference)
 
       expect(storedRecord?.stringAge).to.equal(4)
     })
 
     it('stores mixed type properties', async () => {
       const params = await resource.create(data)
-      const storedRecord: Car|null = await Car.findOneBy({
-        id: params.id,
-      } as any)
+      const reference: any = {}
+      reference[resource.idName()] = params.carId
+      const storedRecord: Car|null = await Car.findOneBy(reference)
 
       expect(storedRecord?.meta).to.deep.equal({
         title: data['meta.title'],
@@ -262,10 +262,10 @@ describe('Resource', () => {
     it('creates new resource with uuid', async () => {
       carParams = await resource.create({
         ...data,
-        carBuyerId: carBuyer.id,
+        carBuyerId: carBuyer.carBuyerId,
       })
 
-      expect(carParams.carBuyerId).to.equal(carBuyer.id)
+      expect(carParams.carBuyerId).to.equal(carBuyer.carBuyerId)
     })
   })
 
@@ -280,7 +280,7 @@ describe('Resource', () => {
     })
 
     afterEach(async () => {
-      await Car.delete(carParams.id)
+      await Car.delete(carParams.carId)
       await CarDealer.delete(carDealer.id)
     })
 

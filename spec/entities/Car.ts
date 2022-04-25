@@ -15,7 +15,7 @@ export enum CarType {
 @Entity()
 export class Car extends BaseEntity {
   @PrimaryGeneratedColumn()
-  public id: number;
+  public carId: number;
 
   @Column()
   @IsDefined()

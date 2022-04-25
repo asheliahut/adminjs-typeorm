@@ -38,6 +38,10 @@ export class Resource extends BaseResource {
     return this.model.name
   }
 
+  public idName(): string {
+    return this.model.getRepository().metadata.primaryColumns[0].propertyName
+  }
+
   public properties(): Array<Property> {
     return [...Object.values(this.propsObject)]
   }
@@ -71,9 +75,10 @@ export class Resource extends BaseResource {
   }
 
   public async findOne(id: string | number): Promise<BaseRecord | null> {
-    const instance = await this.model.findOneBy({
-      id,
-    } as any)
+    const reference: any = {}
+    reference[this.idName()] = id
+
+    const instance = await this.model.findOneBy(reference)
     if (!instance) {
       return null
     }
@@ -81,9 +86,10 @@ export class Resource extends BaseResource {
   }
 
   public async findMany(ids: Array<string | number>): Promise<Array<BaseRecord>> {
-    const instances = await this.model.findBy({
-      id: In(ids),
-    } as any)
+    const reference: any = {}
+    reference[this.idName()] = In(ids)
+    const instances = await this.model.findBy(reference)
+
     return instances.map((instance) => new BaseRecord(instance, this))
   }
 
@@ -96,9 +102,9 @@ export class Resource extends BaseResource {
   }
 
   public async update(pk: string | number, params: any = {}): Promise<ParamsType> {
-    const instance = await this.model.findOneBy({
-      id: pk,
-    } as any)
+    const reference: any = {}
+    reference[this.idName()] = pk
+    const instance = await this.model.findOneBy(reference)
     if (instance) {
       const preparedParams = flat.unflatten<any, any>(this.prepareParams(params))
       Object.keys(preparedParams).forEach((paramName) => {
@@ -111,10 +117,10 @@ export class Resource extends BaseResource {
   }
 
   public async delete(pk: string | number): Promise<any> {
+    const reference: any = {}
+    reference[this.idName()] = pk
     try {
-      const instance = await this.model.findOneBy({
-        id: pk,
-      } as any)
+      const instance = await this.model.findOneBy(reference)
       if (instance) {
         await instance.remove()
       }
