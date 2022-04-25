@@ -214,8 +214,7 @@ describe('Resource', () => {
         age: 4,
         stringAge: '4',
       })
-
-      record = await resource.findOne(params.id)
+      record = await resource.findOne(params.carId)
     })
 
     it('updates record name', async () => {
@@ -285,7 +284,7 @@ describe('Resource', () => {
     })
 
     it('deletes the resource', async () => {
-      await resource.delete(carParams.id)
+      await resource.delete(carParams.carId)
       expect(await resource.count({} as Filter)).to.eq(0)
     })
 
