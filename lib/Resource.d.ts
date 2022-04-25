@@ -11,6 +11,7 @@ export declare class Resource extends BaseResource {
     databaseType(): string;
     name(): string;
     id(): string;
+    idName(): string;
     properties(): Array<Property>;
     property(path: string): Property;
     count(filter: Filter): Promise<number>;
