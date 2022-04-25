@@ -7,7 +7,7 @@ export class CarBuyer extends BaseEntity {
   @PrimaryGeneratedColumn('uuid', {
     name: 'car_buyer_id',
   })
-  public id: string;
+  public carBuyerId: string;
 
   @Column()
   @IsDefined()
