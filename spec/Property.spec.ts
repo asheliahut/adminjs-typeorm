@@ -25,7 +25,6 @@ describe('Property', () => {
     it('returns a name of the property', () => {
       const column = columns.find((c) => c.propertyName === 'carId') as ColumnMetadata
 
-      console.log(column)
       expect(new Property(column).name()).to.equal('carId')
     })
   })

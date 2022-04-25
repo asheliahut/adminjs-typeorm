@@ -214,7 +214,6 @@ describe('Resource', () => {
         age: 4,
         stringAge: '4',
       })
-
       record = await resource.findOne(params.carId)
     })
 
