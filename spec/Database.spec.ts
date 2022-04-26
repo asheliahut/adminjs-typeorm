@@ -1,14 +1,14 @@
 import { expect } from 'chai'
 
-import { dataSource, connect, close } from './utils/testDataSource'
+import { dataSource } from './utils/test-data-source'
 import { Database } from '../src/Database'
 
 describe('Database', () => {
   before(async () => {
-    await connect()
+    await dataSource.initialize()
   })
 
-  after(() => { close() })
+  after(() => { dataSource.destroy() })
 
   describe('.isAdapterFor', () => {
     it('returns true when typeorm DataSource is given', () => {

@@ -19,6 +19,7 @@
     "test": "mocha -r ts-node/register ./spec/**/*.spec.ts",
     "ts-node": "ts-node",
     "lint": "eslint './src/**/*.{ts,js}' './spec/**/*.{ts,js}' './example-app/**/*.{ts,js}' --ignore-pattern 'build' --ignore-pattern 'yarn.lock'",
+    "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run -d spec/utils/test-data-source.ts",
     "check:all": "yarn lint && yarn test && yarn build",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "release": "semantic-release"

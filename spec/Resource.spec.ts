@@ -4,7 +4,7 @@ import { validate } from 'class-validator'
 
 import { Car } from './entities/Car'
 import { CarDealer } from './entities/CarDealer'
-import { connect, close } from './utils/testDataSource'
+import { dataSource } from './utils/test-data-source'
 
 import { Resource } from '../src/Resource'
 import { CarBuyer } from './entities/CarBuyer'
@@ -22,7 +22,7 @@ describe('Resource', () => {
   }
 
   before(async () => {
-    await connect()
+    await dataSource.initialize()
   })
 
   beforeEach(async () => {
@@ -33,7 +33,7 @@ describe('Resource', () => {
   })
 
   after(async () => {
-    close()
+    dataSource.destroy()
   })
 
   describe('.isAdapterFor', () => {
